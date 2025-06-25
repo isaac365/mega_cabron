@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Citas Psicológicas - UPIICSA</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 1rem 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .logo img {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .nav-links a:hover {
+      color: #ffd700;
+    }
+
+    .auth-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    main {
+      margin-top: 80px;
+      padding: 2rem 0;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 4rem 0;
+      color: white;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      padding: 4rem 0;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      color: #333;
+      margin-bottom: 1rem;
+    }
+
+    .steps {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 4rem 2rem;
+      border-radius: 15px;
+      margin: 2rem 0;
+    }
+
+    .steps h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: #333;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .step-number {
+      background: #667eea;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin: 0 auto 1rem;
+    }
+
+    footer {
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      text-align: center;
+      padding: 2rem 0;
+      margin-top: 4rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Estilos para el modal de login */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      position: relative;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      position: absolute;
+      right: 15px;
+      top: 10px;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="container">
+    <div class="logo">
+      <div style="width: 50px; height: 50px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px;">
+        <span style="color: white; font-size: 1.5rem;">🏥</span>
+      </div>
+      <span>UPIICSA Psicología</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#como-funciona">¿Cómo funciona?</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <div class="auth-buttons">
+      <button class="btn btn-secondary" onclick="openLoginModal()">Iniciar Sesión</button>
+      <button class="btn btn-primary" onclick="openRegisterModal()">Registrarse</button>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section id="inicio" class="hero">
+    <div class="container">
+      <h1>Bienestar Mental para Estudiantes</h1>
+      <p>Sistema integral de citas psicológicas para la comunidad estudiantil de UPIICSA. Tu salud mental es nuestra prioridad.</p>
+      <button class="btn btn-primary" onclick="openRegisterModal()" style="font-size: 1.1rem; padding: 1rem 2rem;">Agendar Cita Ahora</button>
+    </div>
+  </section>
+
+  <section id="servicios" class="container">
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">👨‍⚕️</div>
+        <h3>Psicólogos Especializados</h3>
+        <p>Contamos con profesionales especializados en psicología educativa, clínica y social para atender tus necesidades específicas.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>Citas Flexibles</h3>
+        <p>Agenda citas presenciales o virtuales según tu disponibilidad. Horarios adaptados a tu vida académica.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <h3>Confidencialidad Total</h3>
+        <p>Todas las sesiones son completamente confidenciales. Tu privacidad y bienestar son nuestra máxima prioridad.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💻</div>
+        <h3>Plataforma Digital</h3>
+        <p>Gestiona tus citas, consulta tu historial y recibe notificaciones a través de nuestra plataforma fácil de usar.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Apoyo Especializado</h3>
+        <p>Tratamiento para ansiedad, estrés académico, depresión, problemas de autoestima y orientación vocacional.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🆓</div>
+        <h3>Servicio Gratuito</h3>
+        <p>Todos los servicios de apoyo psicológico son completamente gratuitos para los estudiantes de UPIICSA.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="como-funciona" class="container">
+    <div class="steps">
+      <h2>¿Cómo Agendar tu Cita?</h2>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Regístrate</h3>
+          <p>Crea tu cuenta con tu boleta de estudiante y datos personales básicos.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Elige Psicólogo</h3>
+          <p>Selecciona al profesional que mejor se adapte a tus necesidades específicas.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Agenda Cita</h3>
+          <p>Escoge fecha, hora y modalidad (presencial o virtual) que más te convenga.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Confirma</h3>
+          <p>Recibe confirmación por email y notificación en la plataforma de tu cita programada.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="contacto">
+  <div class="container">
+    <p>&copy; 2024 UPIICSA - Sistema de Citas Psicológicas. Todos los derechos reservados.</p>
+    <p>📞 55-5729-6000 ext. 56850 | 📧 psicologia@upiicsa.ipn.mx</p>
+  </div>
+</footer>
+
+<!-- Modal de Login -->
+<div id="loginModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal('loginModal')">&times;</span>
+    <h2 style="text-align: center; margin-bottom: 1.5rem; color: #333;">Iniciar Sesión</h2>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="loginEmail">Email:</label>
+        <input type="email" id="loginEmail" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña:</label>
+        <input type="password" id="loginPassword" name="password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Iniciar Sesión</button>
+    </form>
+    <p style="text-align: center; margin-top: 1rem;">
+      ¿No tienes cuenta? <a href="#" onclick="switchModal('loginModal', 'registerModal')" style="color: #667eea;">Regístrate aquí</a>
+    </p>
+  </div>
+</div>
+
+<!-- Modal de Registro -->
+<div id="registerModal" class="modal">
+  <div class="modal-content" style="max-width: 500px;">
+    <span class="close" onclick="closeModal('registerModal')">&times;</span>
+    <h2 style="text-align: center; margin-bottom: 1.5rem; color: #333;">Registro de Estudiante</h2>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="boleta">Boleta:</label>
+        <input type="text" id="boleta" name="boleta" required placeholder="Ej: 2020630001">
+      </div>
+      <div class="form-group">
+        <label for="nombre">Nombre(s):</label>
+        <input type="text" id="nombre" name="nombre" required>
+      </div>
+      <div class="form-group">
+        <label for="apellidos">Apellidos:</label>
+        <input type="text" id="apellidos" name="apellidos" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Institucional:</label>
+        <input type="email" id="email" name="email" required placeholder="tu.email@alumno.ipn.mx">
+      </div>
+      <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        <input type="tel" id="telefono" name="telefono" placeholder="55-1234-5678">
+      </div>
+      <div class="form-group">
+        <label for="carrera">Carrera:</label>
+        <select id="carrera" name="carrera" required>
+          <option value="">Selecciona tu carrera</option>
+          <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+          <option value="Ingeniería Informática">Ingeniería Informática</option>
+          <option value="Ciencias de la Informática">Ciencias de la Informática</option>
+          <option value="Administración Industrial">Administración Industrial</option>
+          <option value="Ciencias de los Datos">Ciencias de los Datos</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="semestre">Semestre:</label>
+        <select id="semestre" name="semestre" required>
+          <option value="">Selecciona</option>
+          <option value="1">1°</option>
+          <option value="2">2°</option>
+          <option value="3">3°</option>
+          <option value="4">4°</option>
+          <option value="5">5°</option>
+          <option value="6">6°</option>
+          <option value="7">7°</option>
+          <option value="8">8°</option>
+          <option value="9">9°</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="password">Contraseña:</label>
+        <input type="password" id="password" name="password" required minlength="6">
+      </div>
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña:</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Registrarse</button>
+    </form>
+    <p style="text-align: center; margin-top: 1rem;">
+      ¿Ya tienes cuenta? <a href="#" onclick="switchModal('registerModal', 'loginModal')" style="color: #667eea;">Inicia sesión aquí</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  // Configuración de la API
+  const API_BASE = 'http://localhost:3000/api';
+
+  // Funciones para modales
+  function openLoginModal() {
+    document.getElementById('loginModal').style.display = 'block';
+  }
+
+  function openRegisterModal() {
+    document.getElementById('registerModal').style.display = 'block';
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+  }
+
+  function switchModal(fromModal, toModal) {
+    closeModal(fromModal);
+    document.getElementById(toModal).style.display = 'block';
+  }
+
+  // Cerrar modal al hacer click fuera
+  window.onclick = function(event) {
+    const loginModal = document.getElementById('loginModal');
+    const registerModal = document.getElementById('registerModal');
+    if (event.target === loginModal) {
+      loginModal.style.display = 'none';
+    }
+    if (event.target === registerModal) {
+      registerModal.style.display = 'none';
+    }
+  }
+
+  // Función para mostrar alertas
+  function showAlert(message, type = 'error', container = null) {
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type}`;
+    alert.textContent = message;
+
+    if (container) {
+      container.insertBefore(alert, container.firstChild);
+    } else {
+      document.body.insertBefore(alert, document.body.firstChild);
+    }
+
+    setTimeout(() => {
+      alert.remove();
+    }, 5000);
+  }
+
+  // Manejo del formulario de login
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const data = {
+      email: formData.get('email'),
+      password: formData.get('password')
+    };
+
+    try {
+      const response = await fetch(`${API_BASE}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Guardar token en localStorage
+        localStorage.setItem('token', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
+
+        showAlert('Inicio de sesión exitoso', 'success');
+
+        // Redirigir al dashboard
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1000);
+      } else {
+        showAlert(result.error, 'error', document.querySelector('#loginModal .modal-content'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showAlert('Error de conexión', 'error', document.querySelector('#loginModal .modal-content'));
+    }
+  });
+
+  // Manejo del formulario de registro
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+
+    if (password !== confirmPassword) {
+      showAlert('Las contraseñas no coinciden', 'error', document.querySelector('#registerModal .modal-content'));
+      return;
+    }
+
+    const data = {
+      boleta: formData.get('boleta'),
+      nombre: formData.get('nombre'),
+      apellidos: formData.get('apellidos'),
+      email: formData.get('email'),
+      telefono: formData.get('telefono'),
+      carrera: formData.get('carrera'),
+      semestre: parseInt(formData.get('semestre')),
+      password: password
+    };
+
+    try {
+      const response = await fetch(`${API_BASE}/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showAlert('Registro exitoso. Ahora puedes iniciar sesión.', 'success', document.querySelector('#registerModal .modal-content'));
+
+        // Limpiar formulario
+        e.target.reset();
+
+        // Cambiar a modal de login después de 2 segundos
+        setTimeout(() => {
+          switchModal('registerModal', 'loginModal');
+        }, 2000);
+      } else {
+        showAlert(result.error, 'error', document.querySelector('#registerModal .modal-content'));
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      showAlert('Error de conexión', 'error', document.querySelector('#registerModal .modal-content'));
+    }
+  });
+
+  // Verificar si ya está logueado
+  document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Si ya está logueado, cambiar los botones
+      const authButtons = document.querySelector('.auth-buttons');
+      authButtons.innerHTML = `
+                    <button class="btn btn-primary" onclick="window.location.href='/dashboard'">Dashboard</button>
+                    <button class="btn btn-secondary" onclick="logout()">Cerrar Sesión</button>
+                `;
+    }
+  });
+
+  // Función de logout
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    location.reload();
+  }
+
+  // Smooth scrolling para navegación
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }
+    });
+  });
+</script>
+</body>
+</html>
