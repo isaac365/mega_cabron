@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Administrador - UPIICSA</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      padding: 1rem 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .logo-icon {
+      width: 50px;
+      height: 50px;
+      background: #4CAF50;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: white;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      background: #4CAF50;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger {
+      background: #f44336;
+      color: white;
+    }
+
+    .btn-primary {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #ff9800;
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-top: 80px;
+      padding: 2rem 0;
+    }
+
+    .page-title {
+      text-align: center;
+      color: white;
+      margin-bottom: 2rem;
+    }
+
+    .page-title h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 1rem;
+      gap: 1rem;
+    }
+
+    .nav-tab {
+      padding: 0.8rem 1.5rem;
+      background: transparent;
+      color: white;
+      border: 2px solid transparent;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-tab.active {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-tab:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Content Sections */
+    .content-section {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      padding: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .content-section.active {
+      display: block;
+    }
+
+    /* Dashboard Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .stat-card h3 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-card p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin-bottom: 2rem;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .data-table th {
+      background: #667eea;
+      color: white;
+      padding: 1rem;
+      text-align: left;
+      font-weight: 600;
+    }
+
+    .data-table td {
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    /* Status badges */
+    .status-badge {
+      padding: 0.3rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .status-active {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-inactive {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-completed {
+      background: #d1ecf1;
+      color: #0c5460;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    /* Modals */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 2rem;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid #eee;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #000;
+    }
+
+    /* Alerts */
+    .alert {
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .alert-success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+
+    .alert-warning {
+      background-color: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeaa7;
+    }
+
+    /* Loading */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-tabs {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .nav-tab {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<header class="header">
+  <div class="container">
+    <div class="header-content">
+      <div class="logo">
+        <div class="logo-icon">👨‍💼</div>
+        <span>Panel Administrador</span>
+      </div>
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">A</div>
+        <div>
+          <div id="userName">Cargando...</div>
+          <small style="opacity: 0.8;">Administrador</small>
+        </div>
+        <button class="btn btn-danger" onclick="logout()">Cerrar Sesión</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="container">
+    <div class="page-title">
+      <h1>Sistema de Administración</h1>
+      <p>Panel de control para gestión completa del sistema</p>
+    </div>
+
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="showSection('dashboard')">📊 Dashboard</button>
+      <button class="nav-tab" onclick="showSection('usuarios')">👥 Usuarios</button>
+      <button class="nav-tab" onclick="showSection('citas')">📅 Citas</button>
+      <button class="nav-tab" onclick="showSection('psicologos')">👨‍⚕️ Psicólogos</button>
+      <button class="nav-tab" onclick="showSection('reportes')">📈 Reportes</button>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="content-section active">
+      <div class="stats-grid" id="statsGrid">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <p>Cargando estadísticas...</p>
+        </div>
+      </div>
+
+      <h3>Actividad Reciente</h3>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Usuario</th>
+            <th>Acción</th>
+            <th>Estado</th>
+          </tr>
+          </thead>
+          <tbody id="actividadReciente">
+          <tr>
+            <td colspan="4" class="loading">Cargando actividad...</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Usuarios Section -->
+    <div id="usuarios" class="content-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Gestión de Usuarios</h2>
+        <button class="btn btn-primary" onclick="openModal('nuevoUsuarioModal')">+ Nuevo Usuario</button>
+      </div>
+
+      <div class="form-row" style="margin-bottom: 2rem;">
+        <div class="form-group">
+          <input type="text" id="buscarUsuario" placeholder="Buscar por nombre, email o boleta..."
+                 onkeyup="filtrarUsuarios()">
+        </div>
+        <div class="form-group">
+          <select id="filtroTipoUsuario" onchange="filtrarUsuarios()">
+            <option value="">Todos los tipos</option>
+            <option value="alumno">Alumnos</option>
+            <option value="psicologo">Psicólogos</option>
+            <option value="admin">Administradores</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Boleta</th>
+            <th>Tipo</th>
+            <th>Estado</th>
+            <th>Registro</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody id="usuariosTable">
+          <tr>
+            <td colspan="8" class="loading">Cargando usuarios...</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Citas Section -->
+    <div id="citas" class="content-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Gestión de Citas</h2>
+        <div>
+          <button class="btn btn-secondary" onclick="exportarCitas()">📊 Exportar</button>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom: 2rem;">
+        <div class="form-group">
+          <input type="date" id="fechaInicio" onchange="filtrarCitas()">
+        </div>
+        <div class="form-group">
+          <input type="date" id="fechaFin" onchange="filtrarCitas()">
+        </div>
+        <div class="form-group">
+          <select id="filtroEstadoCita" onchange="filtrarCitas()">
+            <option value="">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="completada">Completada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>ID</th>
+            <th>Alumno</th>
+            <th>Psicólogo</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th>Modalidad</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody id="citasTable">
+          <tr>
+            <td colspan="8" class="loading">Cargando citas...</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Psicólogos Section -->
+    <div id="psicologos" class="content-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h2>Gestión de Psicólogos</h2>
+        <button class="btn btn-primary" onclick="openModal('nuevoPsicologoModal')">+ Nuevo Psicólogo</button>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Especialidad</th>
+            <th>Consultorio</th>
+            <th>Horario</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+          </thead>
+          <tbody id="psicologosTable">
+          <tr>
+            <td colspan="7" class="loading">Cargando psicólogos...</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Reportes Section -->
+    <div id="reportes" class="content-section">
+      <h2>Reportes y Estadísticas</h2>
+
+      <div class="form-row" style="margin-bottom: 2rem;">
+        <div class="form-group">
+          <label>Período:</label>
+          <select id="periodoReporte" onchange="generarReporte()">
+            <option value="semana">Última semana</option>
+            <option value="mes">Último mes</option>
+            <option value="trimestre">Último trimestre</option>
+            <option value="año">Último año</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tipo de Reporte:</label>
+          <select id="tipoReporte" onchange="generarReporte()">
+            <option value="citas">Citas por período</option>
+            <option value="psicologos">Rendimiento psicólogos</option>
+            <option value="usuarios">Actividad usuarios</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="reporteContainer">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <p>Selecciona los parámetros para generar el reporte</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Nuevo Usuario -->
+<div id="nuevoUsuarioModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Crear Nuevo Usuario</h3>
+      <span class="close" onclick="closeModal('nuevoUsuarioModal')">&times;</span>
+    </div>
+    <form id="nuevoUsuarioForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre(s):</label>
+          <input type="text" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Apellidos:</label>
+          <input type="text" name="apellidos" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email:</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label>Teléfono:</label>
+          <input type="tel" name="telefono">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tipo de Usuario:</label>
+          <select name="tipo_usuario" required onchange="toggleBoletaField(this)">
+            <option value="">Seleccionar</option>
+            <option value="alumno">Alumno</option>
+            <option value="psicologo">Psicólogo</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+        <div class="form-group" id="boletaField">
+          <label>Boleta:</label>
+          <input type="text" name="boleta">
+        </div>
+      </div>
+      <div class="form-row" id="alumnoFields" style="display: none;">
+        <div class="form-group">
+          <label>Carrera:</label>
+          <select name="carrera">
+            <option value="">Seleccionar</option>
+            <option value="Ingeniería Industrial">Ingeniería Industrial</option>
+            <option value="Ingeniería Informática">Ingeniería Informática</option>
+            <option value="Ciencias de la Informática">Ciencias de la Informática</option>
+            <option value="Administración Industrial">Administración Industrial</option>
+            <option value="Ciencias de los Datos">Ciencias de los Datos</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Semestre:</label>
+          <select name="semestre">
+            <option value="">Seleccionar</option>
+            <option value="1">1°</option>
+            <option value="2">2°</option>
+            <option value="3">3°</option>
+            <option value="4">4°</option>
+            <option value="5">5°</option>
+            <option value="6">6°</option>
+            <option value="7">7°</option>
+            <option value="8">8°</option>
+            <option value="9">9°</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Contraseña:</label>
+        <input type="password" name="password" required minlength="6">
+      </div>
+      <div style="text-align: right; margin-top: 2rem;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('nuevoUsuarioModal')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" style="margin-left: 1rem;">Crear Usuario</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Nuevo Psicólogo -->
+<div id="nuevoPsicologoModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Registrar Nuevo Psicólogo</h3>
+      <span class="close" onclick="closeModal('nuevoPsicologoModal')">&times;</span>
+    </div>
+    <form id="nuevoPsicologoForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre(s):</label>
+          <input type="text" name="nombre" required>
+        </div>
+        <div class="form-group">
+          <label>Apellidos:</label>
+          <input type="text" name="apellidos" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Email:</label>
+          <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label>Teléfono:</label>
+          <input type="tel" name="telefono">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Cédula Profesional:</label>
+          <input type="text" name="cedula_profesional" required>
+        </div>
+        <div class="form-group">
+          <label>Especialidad:</label>
+          <input type="text" name="especialidad" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Consultorio:</label>
+          <input type="text" name="consultorio">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Horario Inicio:</label>
+          <input type="time" name="horario_inicio" value="08:00">
+        </div>
+        <div class="form-group">
+          <label>Horario Fin:</label>
+          <input type="time" name="horario_fin" value="18:00">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Biografía:</label>
+        <textarea name="biografia" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Contraseña:</label>
+        <input type="password" name="password" required minlength="6">
+      </div>
+      <div style="text-align: right; margin-top: 2rem;">
+        <button type="button" class="btn btn-secondary" onclick="closeModal('nuevoPsicologoModal')">Cancelar</button>
+        <button type="submit" class="btn btn-primary" style="margin-left: 1rem;">Registrar Psicólogo</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  const API_BASE = 'http://localhost:3000/api';
+  let currentUser = null;
+  let allUsers = [];
+  let allCitas = [];
+  let allPsicologos = [];
+
+  // Verificar autenticación y rol
+  document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (!token || user.tipo_usuario !== 'admin') {
+      window.location.href = '/';
+      return;
+    }
+
+    currentUser = user;
+    document.getElementById('userName').textContent = `${user.nombre} ${user.apellidos}`;
+    document.getElementById('userAvatar').textContent = user.nombre.charAt(0).toUpperCase();
+
+    // Cargar datos iniciales
+    await loadDashboard();
+  });
+
+  // Navegación entre secciones
+  function showSection(sectionId) {
+    // Ocultar todas las secciones
+    document.querySelectorAll('.content-section').forEach(section => {
+      section.classList.remove('active');
+    });
+
+    // Remover clase active de todos los tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.classList.remove('active');
+    });
+
+    // Mostrar sección seleccionada
+    document.getElementById(sectionId).classList.add('active');
+
+    // Activar tab correspondiente
+    event.target.classList.add('active');
+
+    // Cargar datos según la sección
+    switch(sectionId) {
+      case 'dashboard':
+        loadDashboard();
+        break;
+      case 'usuarios':
+        loadUsuarios();
+        break;
+      case 'citas':
+        loadCitas();
+        break;
+      case 'psicologos':
+        loadPsicologos();
+        break;
+      case 'reportes':
+        loadReportes();
+        break;
+    }
+  }
+
+  // Cargar dashboard
+  async function loadDashboard() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/dashboard`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cargar dashboard');
+
+      const data = await response.json();
+      renderDashboardStats(data.stats);
+      renderRecentActivity(data.recentActivity);
+    } catch (error) {
+      console.error('Error cargando dashboard:', error);
+      showError('Error al cargar datos del dashboard');
+    }
+  }
+
+  // Renderizar estadísticas del dashboard
+  function renderDashboardStats(stats) {
+    const statsGrid = document.getElementById('statsGrid');
+    statsGrid.innerHTML = `
+                <div class="stat-card">
+                    <h3>${stats.totalUsuarios || 0}</h3>
+                    <p>Total Usuarios</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.totalAlumnos || 0}</h3>
+                    <p>Alumnos Registrados</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.totalPsicologos || 0}</h3>
+                    <p>Psicólogos Activos</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.citasHoy || 0}</h3>
+                    <p>Citas Hoy</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.citasCompletadas || 0}</h3>
+                    <p>Citas Completadas</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${stats.citasPendientes || 0}</h3>
+                    <p>Citas Pendientes</p>
+                </div>
+            `;
+  }
+
+  // Renderizar actividad reciente
+  function renderRecentActivity(activities) {
+    const tbody = document.getElementById('actividadReciente');
+    if (!activities || activities.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4">No hay actividad reciente</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = activities.map(activity => `
+                <tr>
+                    <td>${formatDate(activity.fecha)}</td>
+                    <td>${activity.usuario}</td>
+                    <td>${activity.accion}</td>
+                    <td><span class="status-badge status-${activity.estado}">${activity.estado}</span></td>
+                </tr>
+            `).join('');
+  }
+
+  // Cargar usuarios
+  async function loadUsuarios() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/usuarios`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cargar usuarios');
+
+      const data = await response.json();
+      allUsers = data.usuarios || [];
+      renderUsuarios(allUsers);
+    } catch (error) {
+      console.error('Error cargando usuarios:', error);
+      showError('Error al cargar usuarios');
+    }
+  }
+
+  // Renderizar tabla de usuarios
+  function renderUsuarios(usuarios) {
+    const tbody = document.getElementById('usuariosTable');
+    if (!usuarios || usuarios.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8">No hay usuarios registrados</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = usuarios.map(usuario => `
+                <tr>
+                    <td>${usuario.id}</td>
+                    <td>${usuario.nombre} ${usuario.apellidos}</td>
+                    <td>${usuario.email}</td>
+                    <td>${usuario.boleta || 'N/A'}</td>
+                    <td><span class="status-badge status-${usuario.tipo_usuario}">${usuario.tipo_usuario}</span></td>
+                    <td><span class="status-badge ${usuario.activo ? 'status-active' : 'status-inactive'}">${usuario.activo ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>${formatDate(usuario.fecha_registro)}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editarUsuario(${usuario.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="toggleUsuarioEstado(${usuario.id}, ${usuario.activo})">
+                            ${usuario.activo ? 'Desactivar' : 'Activar'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+  }
+
+  // Filtrar usuarios
+  function filtrarUsuarios() {
+    const busqueda = document.getElementById('buscarUsuario').value.toLowerCase();
+    const tipo = document.getElementById('filtroTipoUsuario').value;
+
+    let usuariosFiltrados = allUsers.filter(usuario => {
+      const coincideBusqueda = !busqueda ||
+              usuario.nombre.toLowerCase().includes(busqueda) ||
+              usuario.apellidos.toLowerCase().includes(busqueda) ||
+              usuario.email.toLowerCase().includes(busqueda) ||
+              (usuario.boleta && usuario.boleta.includes(busqueda));
+
+      const coincideTipo = !tipo || usuario.tipo_usuario === tipo;
+
+      return coincideBusqueda && coincideTipo;
+    });
+
+    renderUsuarios(usuariosFiltrados);
+  }
+
+  // Cargar citas
+  async function loadCitas() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/citas`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cargar citas');
+
+      const data = await response.json();
+      allCitas = data.citas || [];
+      renderCitas(allCitas);
+    } catch (error) {
+      console.error('Error cargando citas:', error);
+      showError('Error al cargar citas');
+    }
+  }
+
+  // Renderizar tabla de citas
+  function renderCitas(citas) {
+    const tbody = document.getElementById('citasTable');
+    if (!citas || citas.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8">No hay citas registradas</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = citas.map(cita => `
+                <tr>
+                    <td>${cita.id}</td>
+                    <td>${cita.alumno_nombre}</td>
+                    <td>${cita.psicologo_nombre}</td>
+                    <td>${formatDate(cita.fecha)}</td>
+                    <td>${cita.hora}</td>
+                    <td><span class="status-badge status-${cita.estado}">${cita.estado}</span></td>
+                    <td>${cita.modalidad}</td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editarCita(${cita.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="cancelarCita(${cita.id})">Cancelar</button>
+                    </td>
+                </tr>
+            `).join('');
+  }
+
+  // Filtrar citas
+  function filtrarCitas() {
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+    const estado = document.getElementById('filtroEstadoCita').value;
+
+    let citasFiltradas = allCitas.filter(cita => {
+      const fechaCita = new Date(cita.fecha);
+      const coincideFechaInicio = !fechaInicio || fechaCita >= new Date(fechaInicio);
+      const coincideFechaFin = !fechaFin || fechaCita <= new Date(fechaFin);
+      const coincideEstado = !estado || cita.estado === estado;
+
+      return coincideFechaInicio && coincideFechaFin && coincideEstado;
+    });
+
+    renderCitas(citasFiltradas);
+  }
+
+  // Cargar psicólogos
+  async function loadPsicologos() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/psicologos`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cargar psicólogos');
+
+      const data = await response.json();
+      allPsicologos = data.psicologos || [];
+      renderPsicologos(allPsicologos);
+    } catch (error) {
+      console.error('Error cargando psicólogos:', error);
+      showError('Error al cargar psicólogos');
+    }
+  }
+
+  // Renderizar tabla de psicólogos
+  function renderPsicologos(psicologos) {
+    const tbody = document.getElementById('psicologosTable');
+    if (!psicologos || psicologos.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7">No hay psicólogos registrados</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = psicologos.map(psicologo => `
+                <tr>
+                    <td>${psicologo.nombre} ${psicologo.apellidos}</td>
+                    <td>${psicologo.email}</td>
+                    <td>${psicologo.especialidad}</td>
+                    <td>${psicologo.consultorio || 'No asignado'}</td>
+                    <td>${psicologo.horario_inicio} - ${psicologo.horario_fin}</td>
+                    <td><span class="status-badge ${psicologo.activo ? 'status-active' : 'status-inactive'}">${psicologo.activo ? 'Activo' : 'Inactivo'}</span></td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" onclick="editarPsicologo(${psicologo.id})">Editar</button>
+                        <button class="btn btn-danger btn-sm" onclick="togglePsicologoEstado(${psicologo.id}, ${psicologo.activo})">
+                            ${psicologo.activo ? 'Desactivar' : 'Activar'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+  }
+
+  // Cargar reportes
+  async function loadReportes() {
+    // Los reportes se cargan cuando se seleccionan los parámetros
+    generarReporte();
+  }
+
+  // Generar reporte
+  async function generarReporte() {
+    const periodo = document.getElementById('periodoReporte').value;
+    const tipo = document.getElementById('tipoReporte').value;
+    const container = document.getElementById('reporteContainer');
+
+    if (!periodo || !tipo) {
+      container.innerHTML = '<div class="loading"><p>Selecciona los parámetros para generar el reporte</p></div>';
+      return;
+    }
+
+    container.innerHTML = '<div class="loading"><div class="loading-spinner"></div><p>Generando reporte...</p></div>';
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/reportes?periodo=${periodo}&tipo=${tipo}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al generar reporte');
+
+      const data = await response.json();
+      renderReporte(data, tipo);
+    } catch (error) {
+      console.error('Error generando reporte:', error);
+      container.innerHTML = '<div class="alert alert-error">Error al generar el reporte</div>';
+    }
+  }
+
+  // Renderizar reporte
+  function renderReporte(data, tipo) {
+    const container = document.getElementById('reporteContainer');
+
+    switch(tipo) {
+      case 'citas':
+        container.innerHTML = `
+                        <h3>Reporte de Citas</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>${data.total || 0}</h3>
+                                <p>Total de Citas</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.completadas || 0}</h3>
+                                <p>Completadas</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.canceladas || 0}</h3>
+                                <p>Canceladas</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.pendientes || 0}</h3>
+                                <p>Pendientes</p>
+                            </div>
+                        </div>
+                    `;
+        break;
+      case 'psicologos':
+        container.innerHTML = `
+                        <h3>Rendimiento de Psicólogos</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Psicólogo</th>
+                                        <th>Citas Atendidas</th>
+                                        <th>Calificación Promedio</th>
+                                        <th>Horas Trabajadas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${(data.psicologos || []).map(p => `
+                                        <tr>
+                                            <td>${p.nombre}</td>
+                                            <td>${p.citas_atendidas}</td>
+                                            <td>${p.calificacion_promedio || 'N/A'}</td>
+                                            <td>${p.horas_trabajadas}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+        break;
+      case 'usuarios':
+        container.innerHTML = `
+                        <h3>Actividad de Usuarios</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>${data.nuevos_usuarios || 0}</h3>
+                                <p>Usuarios Nuevos</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.usuarios_activos || 0}</h3>
+                                <p>Usuarios Activos</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.citas_programadas || 0}</h3>
+                                <p>Citas Programadas</p>
+                            </div>
+                        </div>
+                    `;
+        break;
+    }
+  }
+
+  // Manejo de modales
+  function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+  }
+
+  function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+  }
+
+  // Cerrar modal al hacer clic fuera
+  window.onclick = function(event) {
+    if (event.target.classList.contains('modal')) {
+      event.target.style.display = 'none';
+    }
+  }
+
+  // Toggle campos según tipo de usuario
+  function toggleBoletaField(select) {
+    const boletaField = document.getElementById('boletaField');
+    const alumnoFields = document.getElementById('alumnoFields');
+
+    if (select.value === 'alumno') {
+      boletaField.style.display = 'block';
+      alumnoFields.style.display = 'flex';
+    } else if (select.value === 'psicologo') {
+      boletaField.style.display = 'none';
+      alumnoFields.style.display = 'none';
+    } else {
+      boletaField.style.display = 'none';
+      alumnoFields.style.display = 'none';
+    }
+  }
+
+  // Crear nuevo usuario
+  document.getElementById('nuevoUsuarioForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const userData = Object.fromEntries(formData.entries());
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/usuarios`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+      });
+
+      if (!response.ok) throw new Error('Error al crear usuario');
+
+      showSuccess('Usuario creado exitosamente');
+      closeModal('nuevoUsuarioModal');
+      e.target.reset();
+      loadUsuarios();
+    } catch (error) {
+      console.error('Error creando usuario:', error);
+      showError('Error al crear usuario');
+    }
+  });
+
+  // Crear nuevo psicólogo
+  document.getElementById('nuevoPsicologoForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const psicologoData = Object.fromEntries(formData.entries());
+    psicologoData.tipo_usuario = 'psicologo';
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/psicologos`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(psicologoData)
+      });
+
+      if (!response.ok) throw new Error('Error al crear psicólogo');
+
+      showSuccess('Psicólogo registrado exitosamente');
+      closeModal('nuevoPsicologoModal');
+      e.target.reset();
+      loadPsicologos();
+    } catch (error) {
+      console.error('Error creando psicólogo:', error);
+      showError('Error al registrar psicólogo');
+    }
+  });
+
+  // Funciones de utilidad
+  function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-MX');
+  }
+
+  function showSuccess(message) {
+    // Crear y mostrar notificación de éxito
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-success';
+    alert.textContent = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '100px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '9999';
+    document.body.appendChild(alert);
+
+    setTimeout(() => {
+      alert.remove();
+    }, 3000);
+  }
+
+  function showError(message) {
+    // Crear y mostrar notificación de error
+    const alert = document.createElement('div');
+    alert.className = 'alert alert-error';
+    alert.textContent = message;
+    alert.style.position = 'fixed';
+    alert.style.top = '100px';
+    alert.style.right = '20px';
+    alert.style.zIndex = '9999';
+    document.body.appendChild(alert);
+
+    setTimeout(() => {
+      alert.remove();
+    }, 5000);
+  }
+
+  // Funciones de acción
+  async function toggleUsuarioEstado(userId, currentState) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/usuarios/${userId}/toggle`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cambiar estado');
+
+      showSuccess(`Usuario ${currentState ? 'desactivado' : 'activado'} exitosamente`);
+      loadUsuarios();
+    } catch (error) {
+      console.error('Error cambiando estado:', error);
+      showError('Error al cambiar estado del usuario');
+    }
+  }
+
+  async function togglePsicologoEstado(psicologoId, currentState) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/psicologos/${psicologoId}/toggle`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cambiar estado');
+
+      showSuccess(`Psicólogo ${currentState ? 'desactivado' : 'activado'} exitosamente`);
+      loadPsicologos();
+    } catch (error) {
+      console.error('Error cambiando estado:', error);
+      showError('Error al cambiar estado del psicólogo');
+    }
+  }
+
+  function editarUsuario(userId) {
+    // Implementar edición de usuario
+    console.log('Editar usuario:', userId);
+  }
+
+  function editarCita(citaId) {
+    // Implementar edición de cita
+    console.log('Editar cita:', citaId);
+  }
+
+  function editarPsicologo(psicologoId) {
+    // Implementar edición de psicólogo
+    console.log('Editar psicólogo:', psicologoId);
+  }
+
+  async function cancelarCita(citaId) {
+    if (!confirm('¿Estás seguro de que deseas cancelar esta cita?')) return;
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`${API_BASE}/admin/citas/${citaId}/cancelar`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) throw new Error('Error al cancelar cita');
+
+      showSuccess('Cita cancelada exitosamente');
+      loadCitas();
+    } catch (error) {
+      console.error('Error cancelando cita:', error);
+      showError('Error al cancelar la cita');
+    }
+  }
+
+  function exportarCitas() {
+    // Implementar exportación de citas
+    console.log('Exportar citas');
+    showSuccess('Función de exportación en desarrollo');
+  }
+
+  function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  }
+</script>
+</body>
+</html>
